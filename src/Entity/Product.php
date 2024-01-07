@@ -56,6 +56,10 @@ class Product
 
     public function setPrice(float $price): static
     {
+        if($price < 0){
+            throw new \InvalidArgumentException('Price cannot be negative');
+        }
+
         $this->price = $price;
 
         return $this;
@@ -68,6 +72,10 @@ class Product
 
     public function setStock(int $stock): static
     {
+        if($stock < 0){
+            throw new \InvalidArgumentException('Stock cannot be negative');
+        }
+
         $this->stock = $stock;
 
         return $this;

@@ -50,6 +50,10 @@ class Order
 
     public function setTotalPrice(float $totalPrice): static
     {
+        if($totalPrice < 0){
+            throw new \InvalidArgumentException('Total price cannot be negative');
+        }
+
         $this->totalPrice = $totalPrice;
 
         return $this;
