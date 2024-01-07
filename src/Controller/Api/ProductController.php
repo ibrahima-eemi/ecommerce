@@ -2,11 +2,9 @@
 
 namespace App\Controller\Api;
 
-use App\Entity\Product;
-use App\Form\ProductType;
-use App\Repository\ProductRepository;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Service\Product\ProductService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -15,67 +13,114 @@ use Symfony\Component\Routing\Annotation\Route;
 class ProductController extends AbstractController
 {
     #[Route('/', name: 'app_product_index', methods: ['GET'])]
-    public function index(ProductRepository $productRepository): Response
+    public function index(ProductService $productService): JsonResponse
     {
-        return $this->render('product/index.html.twig', [
-            'products' => $productRepository->findAll(),
-        ]);
+        $products = $productService->getAllProducts();
+        
+        return new JsonResponse($products, Response::HTTP_OK);
     }
 
-    #[Route('/new', name: 'app_product_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    #[Route('/new', name: 'app_product_new', methods: ['POST'])]
+    public function new(ProductService $productService, Request $request): JsonResponse
     {
-        $product = new Product();
-        $form = $this->createForm(ProductType::class, $product);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($product);
-            $entityManager->flush();
-
-            return $this->redirectToRoute('app_product_index', [], Response::HTTP_SEE_OTHER);
+       
+        $dataAsArray = json_decode(json: $request->getContent(), associative: true);
+        if($dataAsArray === null){
+            $dataAsArray = [];
         }
 
-        return $this->render('product/new.html.twig', [
-            'product' => $product,
-            'form' => $form,
-        ]);
+        $createdProduct = $productService->createOrUpdateProductFromApiRequest($dataAsArray);
+
+        if(!$createdProduct['success']){
+            return $this->json(
+                $createdProduct,
+                Response::HTTP_BAD_REQUEST,
+                ['Content-Type' => 'application/json;charset=UTF-8']
+            );
+        }
+
+        return $this->json(
+            $createdProduct,
+            Response::HTTP_CREATED,
+            ['Content-Type' => 'application/json;charset=UTF-8']
+        );
     }
 
     #[Route('/{id}', name: 'app_product_show', methods: ['GET'])]
-    public function show(Product $product): Response
+    public function show(int $id, ProductService $productService): JsonResponse
     {
-        return $this->render('product/show.html.twig', [
-            'product' => $product,
-        ]);
+        $product = $productService->getProduct($id);
+
+        if(!$product){
+            return $this->json(
+                [],
+                Response::HTTP_NOT_FOUND,
+                ['Content-Type' => 'application/json;charset=UTF-8']
+            );
+        }
+        
+        return $this->json(
+            $product,
+            Response::HTTP_OK,
+            ['Content-Type' => 'application/json;charset=UTF-8']
+        );
     }
 
-    #[Route('/{id}/edit', name: 'app_product_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Product $product, EntityManagerInterface $entityManager): Response
+    #[Route('/{id}/edit', name: 'app_product_edit', methods: ['PATCH'])]
+    public function edit(Request $request, int $id, ProductService $productService): JsonResponse
     {
-        $form = $this->createForm(ProductType::class, $product);
-        $form->handleRequest($request);
+        $product = $productService->getProduct($id);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
-
-            return $this->redirectToRoute('app_product_index', [], Response::HTTP_SEE_OTHER);
+        if(!$product){
+            return $this->json(
+                [],
+                Response::HTTP_NOT_FOUND,
+                ['Content-Type' => 'application/json;charset=UTF-8']
+            );
         }
 
-        return $this->render('product/edit.html.twig', [
-            'product' => $product,
-            'form' => $form,
-        ]);
+        $dataAsArray = json_decode(json: $request->getContent(), associative: true);
+        if($dataAsArray === null){
+            $dataAsArray = [];
+        }
+
+        $updatedProduct = $productService->createOrUpdateProductFromApiRequest($dataAsArray, $product);
+
+        if(!$updatedProduct['success']){
+            return $this->json(
+                $updatedProduct,
+                Response::HTTP_BAD_REQUEST,
+                ['Content-Type' => 'application/json;charset=UTF-8']
+            );
+        }
+
+        return $this->json(
+            $updatedProduct,
+            Response::HTTP_OK,
+            ['Content-Type' => 'application/json;charset=UTF-8']
+        );
     }
 
-    #[Route('/{id}', name: 'app_product_delete', methods: ['POST'])]
-    public function delete(Request $request, Product $product, EntityManagerInterface $entityManager): Response
+    #[Route('/{id}', name: 'app_product_delete', methods: ['DELETE'])]
+    public function delete(Request $request, int $id, ProductService $productService): JsonResponse
     {
-        if ($this->isCsrfTokenValid('delete'.$product->getId(), $request->request->get('_token'))) {
-            $entityManager->remove($product);
-            $entityManager->flush();
+        
+        $product = $productService->getProduct($id);
+
+        if(!$product){
+            return $this->json(
+                [],
+                Response::HTTP_NOT_FOUND,
+                ['Content-Type' => 'application/json;charset=UTF-8']
+            );
         }
 
-        return $this->redirectToRoute('app_product_index', [], Response::HTTP_SEE_OTHER);
+        $productService->deleteProduct($product);
+
+        return $this->json(
+            null,
+            Response::HTTP_NO_CONTENT,
+            ['Content-Type' => 'application/json;charset=UTF-8']
+        );
     }
 }

@@ -11,6 +11,7 @@
                 <th>Id</th>
                 <th>TotalPrice</th>
                 <th>Delivered</th>
+                <th>Date</th>
                 <th>actions</th>
             </tr>
         </thead>
@@ -20,6 +21,7 @@
                 <td>{{ order.id }}</td>
                 <td>{{ order.totalPrice }}</td>
                 <td>{{ order.delivered ? 'Yes' : 'No' }}</td>
+                <td>{{ order.dateCreated }}</td>
                 <td>
                     <a href="{{ path('app_order_show', {'id': order.id}) }}">show</a>
                     <a href="{{ path('app_order_edit', {'id': order.id}) }}">edit</a>
