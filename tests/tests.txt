@@ -1,0 +1,57 @@
+TEST 1 : 
+description : j'envoie au formulaire toutes les valeurs, valides
+attentes : on ajoute un produit dans la bdd en fonction des valeurs
+           on recoit un code 201
+           on recoit un produit au format json
+
+TEST 2 : 
+description : j'envoie un brand null
+attentes : on recoit un code 400
+            on recoit un message d'erreur
+            verifier qu'il n'y a rien en bdd
+
+TEST 3 : 
+description : j'envoie un brand en int
+attentes : on recoit un code 400
+            on recoit un message d'erreur
+            verifier qu'il n'y a rien en bdd
+
+TEST 4 : 
+description : j'envoie un brand avec minimum 1 caractère
+attentes : on recoit un code 400
+            on recoit un message d'erreur
+            verifier qu'il n'y a rien en bdd
+
+TEST 5 : 
+description : j'envoie un brand avec uniquement un espace
+attentes : on recoit un code 400
+            on recoit un message d'erreur
+            verifier qu'il n'y a rien en bdd
+
+[...]
+
+TEST 25 : ...
+
+TEST 26 : 
+description: j'envoie un produit qui existe deja
+attente : recoit un code 400
+            on recoit un message d'erreur
+            verifier qu'il n'y a rien en bdd
+
+TEST 27 : 
+description : verifier que la fonction createOrUpdateProductFromApiRequest renvoie les deux clefs
+attente : voir au dessus
+
+TEST 28 : 
+description : verifier que produit varie en fonction des erreurs
+
+TEST 29 : 
+description : verifier que success varie en fonction des erreurs
+
+TEST 30 : 
+description : j'envoie une requete GET
+attentes : verifier que le code est 405
+
+[...]
+
+TEST 34 : 

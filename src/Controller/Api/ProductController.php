@@ -20,10 +20,29 @@ class ProductController extends AbstractController
         return new JsonResponse($products, Response::HTTP_OK);
     }
 
-    #[Route('/new', name: 'app_api_product_new', methods: ['POST'])]
+    #[Route('/{id}', name: 'app_api_product_show', methods: ['GET'])]
+    public function show(int $id, ProductService $productService): JsonResponse
+    {
+        $product = $productService->getProduct($id);
+
+        if(!$product){
+            return $this->json(
+                [],
+                Response::HTTP_NOT_FOUND,
+                ['Content-Type' => 'application/json;charset=UTF-8']
+            );
+        }
+        
+        return $this->json(
+            $product,
+            Response::HTTP_OK,
+            ['Content-Type' => 'application/json;charset=UTF-8']
+        );
+    }
+
+    #[Route('/', name: 'app_api_product_new', methods: ['POST'])]
     public function new(ProductService $productService, Request $request): JsonResponse
     {
-       
         $dataAsArray = json_decode(json: $request->getContent(), associative: true);
         if($dataAsArray === null){
             $dataAsArray = [];
@@ -42,26 +61,6 @@ class ProductController extends AbstractController
         return $this->json(
             $createdProduct,
             Response::HTTP_CREATED,
-            ['Content-Type' => 'application/json;charset=UTF-8']
-        );
-    }
-
-    #[Route('/{id}', name: 'app_api_product_show', methods: ['GET'])]
-    public function show(int $id, ProductService $productService): JsonResponse
-    {
-        $product = $productService->getProduct($id);
-
-        if(!$product){
-            return $this->json(
-                [],
-                Response::HTTP_NOT_FOUND,
-                ['Content-Type' => 'application/json;charset=UTF-8']
-            );
-        }
-        
-        return $this->json(
-            $product,
-            Response::HTTP_OK,
             ['Content-Type' => 'application/json;charset=UTF-8']
         );
     }
