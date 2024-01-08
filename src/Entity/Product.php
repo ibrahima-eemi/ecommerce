@@ -29,8 +29,13 @@ class Product
     #[ORM\Column(length: 255)]
     private ?string $brand = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[ORM\Column(type: 'datetime')]
     private ?\DateTimeInterface $dateCreated = null;
+
+    public function __construct()
+    {
+        $this->dateCreated = new \DateTime();
+    }
 
     public function getId(): ?int
     {

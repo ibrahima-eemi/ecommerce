@@ -17,7 +17,7 @@ class Order
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private ?float $totalPrice = null;
 
     #[ORM\ManyToMany(targetEntity: Product::class)]
@@ -27,15 +27,16 @@ class Order
     #[ORM\JoinColumn(nullable: false)]
     private ?User $client = null;
 
-    #[ORM\Column]
-    private ?bool $delivered = null;
+    #[ORM\Column(options: ['default' => false])]
+    private ?bool $delivered = false;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[ORM\Column(type: 'datetime')]
     private ?\DateTimeInterface $dateCreated = null;
 
     public function __construct()
     {
         $this->products = new ArrayCollection();
+        $this->dateCreated = new \DateTime();
     }
 
     public function getId(): ?int
