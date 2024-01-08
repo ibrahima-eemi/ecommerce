@@ -103,8 +103,7 @@ class ProductController extends AbstractController
 
     #[Route('/{id}', name: 'app_product_delete', methods: ['DELETE'])]
     public function delete(Request $request, int $id, ProductService $productService): JsonResponse
-    {
-        
+    {   
         $product = $productService->getProduct($id);
 
         if(!$product){
