@@ -27,16 +27,6 @@ class ProductService
         return $this->productRepository->findAll();
     }
 
-    public function createOrUpdateProductFromWebRequest(Request $request, Product $product = null): FormInterface
-    {
-        $form = $this->formFactory->create(ProductType::class, $product);
-        $form->handleRequest($request);
-
-        $result = $this->createOrUpdateProduct($form);
-
-        return $result['form'];
-    }
-
     public function createOrUpdateProductFromApiRequest(array $data, Product $product = null): array
     {
         $form = $this->formFactory->create(ProductType::class, $product);
@@ -50,7 +40,7 @@ class ProductService
         ];
     }
 
-    private function createOrUpdateProduct(FormInterface $form) 
+    public function createOrUpdateProduct(FormInterface $form) 
     { 
         if (!$form->isValid()) {
             $formService = new FormService();
