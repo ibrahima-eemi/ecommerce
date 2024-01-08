@@ -12,7 +12,7 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/api/product')]
 class ProductController extends AbstractController
 {
-    #[Route('/', name: 'app_product_index', methods: ['GET'])]
+    #[Route('/', name: 'app_api_product_index', methods: ['GET'])]
     public function index(ProductService $productService): JsonResponse
     {
         $products = $productService->getAllProducts();
@@ -20,7 +20,7 @@ class ProductController extends AbstractController
         return new JsonResponse($products, Response::HTTP_OK);
     }
 
-    #[Route('/new', name: 'app_product_new', methods: ['POST'])]
+    #[Route('/new', name: 'app_api_product_new', methods: ['POST'])]
     public function new(ProductService $productService, Request $request): JsonResponse
     {
        
@@ -46,7 +46,7 @@ class ProductController extends AbstractController
         );
     }
 
-    #[Route('/{id}', name: 'app_product_show', methods: ['GET'])]
+    #[Route('/{id}', name: 'app_api_product_show', methods: ['GET'])]
     public function show(int $id, ProductService $productService): JsonResponse
     {
         $product = $productService->getProduct($id);
@@ -66,7 +66,7 @@ class ProductController extends AbstractController
         );
     }
 
-    #[Route('/{id}/edit', name: 'app_product_edit', methods: ['PATCH'])]
+    #[Route('/{id}/edit', name: 'app_api_product_edit', methods: ['PATCH'])]
     public function edit(Request $request, int $id, ProductService $productService): JsonResponse
     {
         $product = $productService->getProduct($id);
@@ -101,7 +101,7 @@ class ProductController extends AbstractController
         );
     }
 
-    #[Route('/{id}', name: 'app_product_delete', methods: ['DELETE'])]
+    #[Route('/{id}', name: 'app_api_product_delete', methods: ['DELETE'])]
     public function delete(Request $request, int $id, ProductService $productService): JsonResponse
     {   
         $product = $productService->getProduct($id);

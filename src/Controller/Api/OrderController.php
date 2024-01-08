@@ -12,7 +12,7 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/api/order')]
 class OrderController extends AbstractController
 {
-    #[Route('/', name: 'app_order_index', methods: ['GET'])]
+    #[Route('/', name: 'app_api_order_index', methods: ['GET'])]
     public function index(OrderService $orderService): JsonResponse
     {
         $orders = $orderService->getAllOrders();
@@ -20,7 +20,7 @@ class OrderController extends AbstractController
         return new JsonResponse($orders, Response::HTTP_OK);
     }
 
-    #[Route('/{id}', name: 'app_order_show', methods: ['GET'])]
+    #[Route('/{id}', name: 'app_api_order_show', methods: ['GET'])]
     public function show(int $id, OrderService $orderService): JsonResponse
     {
         $order = $orderService->getOrder($id);
@@ -40,7 +40,7 @@ class OrderController extends AbstractController
         );
     }
 
-    #[Route('/{id}/product/{productId}/add', name: 'app_order_add_product', methods: ['GET'])]
+    #[Route('/{id}/product/{productId}/add', name: 'app_api_order_add_product', methods: ['GET'])]
     public function addProductToOrder(int $id, int $productId, OrderService $orderService, ProductService $productService): JsonResponse
     {
         $order = $orderService->getOrder($id);
@@ -72,7 +72,7 @@ class OrderController extends AbstractController
         );
     }
 
-    #[Route('/{id}/product/{productId}/remove', name: 'app_order_remove_product', methods: ['GET'])]
+    #[Route('/{id}/product/{productId}/remove', name: 'app_api_order_remove_product', methods: ['GET'])]
     public function removeProductFromOrder(int $id, int $productId, OrderService $orderService, ProductService $productService): JsonResponse
     {
         $order = $orderService->getOrder($id);

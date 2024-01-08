@@ -27,13 +27,17 @@ class ProductController extends AbstractController
     #[Route('/new', name: 'app_product_new', methods: ['GET', 'POST'])]
     public function new(Request $request, ProductService $productService): Response
     {
-        $form = $productService->createOrUpdateProductFromWebRequest($request);
+        $product = new Product();
+        $form = $this->createForm(ProductType::class, $product);
+        $form->handleRequest($request);
+
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $productService->createOrUpdateProduct($form);
+
             return $this->redirectToRoute('app_product_index', [], Response::HTTP_SEE_OTHER);
         }
        
-        $product = new Product();
 
         return $this->render('product/new.html.twig', [
             'product' => $product,
@@ -60,11 +64,15 @@ class ProductController extends AbstractController
             return $this->redirectToRoute('app_product_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        $form = $productService->createOrUpdateProductFromWebRequest($request);
+        $form = $this->createForm(ProductType::class, $product);
+        $form->handleRequest($request);
+
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $productService->createOrUpdateProduct($form);
             return $this->redirectToRoute('app_product_index', [], Response::HTTP_SEE_OTHER);
         }
+
 
         return $this->render('product/edit.html.twig', [
             'product' => $product,
